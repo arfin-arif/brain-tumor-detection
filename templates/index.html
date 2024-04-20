@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brain Tumor Detection</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-200 flex items-center justify-center h-screen">
+    <div class="w-1/2 mx-auto p-8 bg-white rounded-lg shadow-lg">
+      <h1 class="text-3xl font-semibold mb-8 text-center">
+        Brain Tumor Detection
+      </h1>
+      <form
+        action="/predict"
+        method="post"
+        enctype="multipart/form-data"
+        class="space-y-4"
+      >
+        <div>
+          <div
+            id="input-box"
+            class="flex-1 items-center max-w-screen-sm mx-auto mb-3 space-y-4 sm:flex sm:space-y-0"
+          >
+            <div class="relative w-full">
+              <div class="items-center justify-center max-w-xl mx-auto">
+                <label
+                  class="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none"
+                  id="drop"
+                  ><span class="flex items-center space-x-2"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-6 h-6 text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      ></path></svg
+                    ><span class="font-medium text-gray-600"
+                      >Drop files to Attach, or<span
+                        class="text-blue-600 underline ml-[4px]"
+                        >browse</span
+                      ></span
+                    ></span
+                  ><input
+                    id="file"
+                    type="file"
+                    name="file"
+                    accept=".jpg"
+                    class="hidden"
+                /></label>
+              </div>
+            </div>
+          </div>
+
+          <img
+            src=""
+            class="mt-4 mx-auto w-2/5 h-40 hidden rounded"
+            id="preview"
+          />
+        </div>
+        <div class="text-center">
+          <button
+            type="submit"
+            class="bg-blue-500 text-white text-center px-4 py-2 rounded-md hover:bg-blue-600"
+          >
+            Predict
+          </button>
+        </div>
+      </form>
+      <div id="result" class="mt-8 text-center"></div>
+    </div>
+
+    <script>
+      const form = document.querySelector("form");
+      const resultDiv = document.getElementById("result");
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const response = await fetch("/predict", {
+          method: "POST",
+          body: formData,
+        });
+        const result = await response.text();
+        resultDiv.innerHTML = `<p class="text-xl font-semibold">${result}</p>`;
+      });
+
+      var input = document.getElementById("file");
+      input.addEventListener("change", (e) => {
+        var file = e.target.files[0];
+
+        displayPreview(file);
+      });
+
+      function displayPreview(file) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          var preview = document.getElementById("preview");
+          preview.src = reader.result;
+          preview.classList.remove("hidden");
+        };
+      }
+    </script>
+  </body>
+</html>
